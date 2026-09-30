@@ -1,0 +1,125 @@
+/* ============================================================
+   Modal —— 通用弹窗（150ms 淡入 + 缩放）
+   ============================================================ */
+
+.da-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  animation: da-overlay-in 150ms ease;
+}
+
+.da-modal-overlay--closing {
+  animation: da-overlay-out 150ms ease forwards;
+}
+
+.da-modal {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--sp-6);
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  outline: none;
+  animation: da-modal-in 150ms ease-out;
+  /* 长串（路径 / hash / 无空格文本）在弹窗内断行，避免横向溢出 */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.da-modal--closing {
+  animation: da-modal-out 150ms ease-in forwards;
+}
+
+.da-modal__title {
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--sp-4);
+}
+
+.da-modal__desc {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--sp-5);
+}
+
+.da-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
+
+/* ---- 隐私声明弹窗内容（引导页「隐私声明」） ---- */
+.da-privacy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.da-privacy__intro {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.da-privacy__item {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+}
+
+.da-privacy__footer {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+@keyframes da-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes da-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes da-modal-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes da-modal-out {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+}

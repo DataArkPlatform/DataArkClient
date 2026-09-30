@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <!-- DeepSeek Harness 占位标识（品牌近似）：鲸形轮廓 + 眼点，单色便于深色主题反白 -->
+  <path d="M3 12.5c3.2-4.6 7.3-6.9 12.2-6.9 2.5 0 4.6.7 5.8 1.9-1.1-.2-2.1-.1-2.9.3.9 1.1 1.4 2.5 1.4 4.1 0 3.7-3.4 6.6-7.7 6.6-4.6 0-8.3-2.4-8.8-6z" stroke="#000000" stroke-width="1.8" stroke-linejoin="round" />
+  <circle cx="15.4" cy="11.2" r="1.15" fill="#000000" />
+</svg>

@@ -1,0 +1,324 @@
+/* ============================================================
+   设置页（H1：704×724 白色浮层）—— 遮罩 / 面板 / 卡片 / 开关 / 表单行 / 语言 / 关于
+   BEM 前缀 da-settings，颜色一律走 tokens.css 变量
+   ============================================================ */
+
+/* ---- 遮罩 + 面板（H1：rgba(0,0,0,0.5) 全屏 + 704×724 白面板 r16） ---- */
+.da-settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 800; /* 低于通用 Modal(900) / Toast(1000)，引导弹窗可盖其上 */
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: da-overlay-in 150ms ease;
+}
+
+.da-settings-modal {
+  width: 704px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  background: var(--color-bg-surface);
+  border: 1px solid #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  outline: none;
+  animation: da-modal-in 150ms ease-out;
+}
+
+/* ---- 面板头部（H2：标题 16px/24 500 无下划线 + 右上 24×24 关闭） ---- */
+.da-settings-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.da-settings-modal__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-settings-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.da-settings-modal__close:hover {
+  background: var(--color-bg-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.da-settings-modal__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 头部下方分隔线（Figma y48：标题下 8px，内容上 8px） */
+.da-settings-modal__divider {
+  border-top: 1px solid var(--color-border-default);
+  margin: 8px 0;
+}
+
+.da-settings-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.da-settings-modal__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* ---- 卡片（H3：p8 r8 bg rgba(222,222,222,0.2) 无边框） ---- */
+.da-settings-card {
+  background: rgba(222, 222, 222, 0.2);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px;
+}
+
+/* 语言卡：标题与分段控件同行（Figma Frame 169） */
+.da-settings-card--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.da-settings-card--row .da-settings-card__title {
+  margin-bottom: 0;
+}
+
+/* H4：卡片标题 14px/22 500 */
+.da-settings-card__title {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+/* ---- 开关行（标签左 / 开关右，Figma space-between） ---- */
+.da-settings-row {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.da-settings-row + .da-settings-row {
+  margin-top: 8px;
+}
+
+.da-settings-row__label {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+}
+
+/* ---- 子表单区（开关开启后揭示） ---- */
+.da-settings-subsection {
+  margin-top: 12px;
+}
+
+.da-settings-label {
+  display: block;
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.da-settings-dirline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* H7：白底 #EBEBEB r8 px12 py9 14px #4D4D4D（行高 40px） */
+.da-settings-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-family: var(--font-sans);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+/* H8：更换 = 纯文字 14px/22 #181818 */
+.da-settings-change {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.da-settings-change:hover {
+  color: var(--color-primary);
+}
+
+.da-settings-hint {
+  margin-top: 8px;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-settings-field {
+  margin-bottom: 12px;
+}
+
+/* H10：白底 #EBEBEB r8 px12 py9 14px（行高 40px） */
+.da-settings-select {
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-family: var(--font-sans);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+/* ---- 自动读取范围勾选 ---- */
+.da-settings-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ---- 语言分段控件（H11：容器 #EBEBEB p2 gap4 r4；激活白底 r4 px8 py4 12 Medium） ---- */
+.da-settings-lang {
+  display: flex;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 4px;
+  background: #ebebeb;
+  flex-shrink: 0;
+}
+
+.da-settings-lang__seg {
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.da-settings-lang__seg--active {
+  background: var(--color-bg-surface);
+}
+
+/* ---- 关于（H12：行 14px/22，标签列宽 72px，值列 x80） ---- */
+.da-settings-about {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.da-settings-about__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.da-settings-about__label {
+  width: 72px;
+  flex-shrink: 0;
+  text-align: left;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.da-settings-about__value {
+  flex: 1;
+  min-width: 0;
+}
+
+.da-settings-about__guide {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-default);
+}
+
+.da-settings-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ============================================================
+   Switch —— H6：48×24 轨道 r12 / 20×20 白色旋钮 r10 / ON #383838 / 150ms 动画
+   ============================================================ */
+
+.da-switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  background: var(--color-border-strong);
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease;
+}
+
+.da-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.da-switch__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 150ms ease;
+}
+
+.da-switch--on {
+  background: #383838;
+}
+
+.da-switch--on .da-switch__knob {
+  transform: translateX(24px);
+}

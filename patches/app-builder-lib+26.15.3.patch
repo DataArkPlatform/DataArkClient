@@ -1,0 +1,16 @@
+diff --git a/node_modules/app-builder-lib/out/node-module-collector/nodeModulesCollector.js b/node_modules/app-builder-lib/out/node-module-collector/nodeModulesCollector.js
+index eb7914f..ad2e8d7 100644
+--- a/node_modules/app-builder-lib/out/node-module-collector/nodeModulesCollector.js
++++ b/node_modules/app-builder-lib/out/node-module-collector/nodeModulesCollector.js
+@@ -132,9 +132,8 @@ class NodeModulesCollector {
+         }
+         // DEDICATED FALLBACK FOR POLLUTED OUTPUT, non-trivial to implement correctly, not needed in most cases, and highly inefficient
+         // Find the first index that starts with { or [
+-        const bracketOpen = Math.max(consoleOutput.indexOf("{"), 0);
+-        const bracketOpenSquare = Math.max(consoleOutput.indexOf("["), 0);
+-        const start = Math.min(bracketOpen, bracketOpenSquare); // always non-negative due to Math.max above
++        const candidates = [consoleOutput.indexOf("{"), consoleOutput.indexOf("[")].filter((i) => i >= 0);
++        const start = candidates.length > 0 ? Math.min(...candidates) : 0;
+         for (let i = start; i < consoleOutput.length; i++) {
+             const slice = consoleOutput.slice(start, i + 1);
+             try {

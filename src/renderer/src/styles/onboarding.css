@@ -1,0 +1,503 @@
+/* ============================================================
+   Onboarding 引导页 —— 全窗覆盖层
+   ============================================================ */
+
+.da-onboarding {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-window);
+  overflow-y: auto;
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.da-onboarding__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+}
+
+.da-onboarding__logo {
+  width: 200px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.da-onboarding__logo::before {
+  content: '';
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--gradient-brand);
+}
+
+.da-onboarding__headline {
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.da-onboarding__sub {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  max-width: 360px;
+  margin-bottom: var(--sp-6);
+}
+
+.da-onboarding__features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  text-align: left;
+  margin-bottom: var(--sp-6);
+  width: 100%;
+}
+
+.da-onboarding__feature {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.da-onboarding__feature svg {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.da-onboarding__check {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  justify-content: center;
+  margin-bottom: var(--sp-5);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-tertiary);
+}
+
+/* 复选框按钮（仅勾选框本体，点击切换同意状态） */
+.da-onboarding__check-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.da-onboarding__agree-text {
+  cursor: pointer;
+  user-select: none;
+}
+
+.da-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-on-primary);
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.da-checkbox--checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.da-onboarding__statement {
+  color: var(--color-primary);
+  text-decoration: underline;
+  margin-left: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-body);
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.da-onboarding__cta {
+  width: 144px;
+  height: 48px;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-bg-surface);
+  background: var(--gradient-cta);
+  color: var(--color-on-primary);
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-cta);
+  font-family: inherit;
+  transition:
+    filter 150ms ease,
+    transform 150ms ease;
+}
+
+.da-onboarding__cta:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+.da-onboarding__cta:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.da-onboarding__cta:disabled {
+  background: var(--gradient-cta-disabled);
+  cursor: not-allowed;
+  box-shadow: none;
+  color: color-mix(in srgb, var(--color-on-primary) 90%, transparent);
+}
+
+/* ---- Figma 视觉对齐层（位图背景 + Hero Logo + 特性卡） ---- */
+.da-onboarding--figma {
+  position: relative;
+  overflow: hidden;
+}
+
+.da-onboarding__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.da-onboarding__hero {
+  width: 200px;
+  height: auto;
+  margin-bottom: var(--sp-2);
+}
+
+.da-onb-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  /* 自适应：224px 起可拉伸（flex-grow），最大 320px 防过度拉宽；窗口窄时保持 224 不收缩 */
+  flex: 1 1 224px;
+  min-width: 224px;
+  max-width: 320px;
+  /* 高度改为最小 96px：desc 折两行时卡片自动长高，避免 overflow 裁字 */
+  min-height: 96px;
+  padding: var(--sp-4);
+  border-radius: 12px;
+  border: 1px solid var(--color-bg-surface);
+  overflow: hidden;
+}
+
+.da-onb-card--blue {
+  background:
+    radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 1) 0%, rgba(228, 248, 255, 0) 100%),
+    linear-gradient(180deg, rgba(221, 242, 255, 0.8) 0%, rgba(233, 246, 255, 0.8) 50%);
+  box-shadow: 0 4px 16px rgba(105, 192, 246, 0.1);
+}
+
+.da-onb-card--purple {
+  background:
+    radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 1) 0%, rgba(238, 238, 252, 0) 100%),
+    linear-gradient(180deg, rgba(235, 235, 255, 0.8) 0%, rgba(252, 249, 255, 0.8) 50%);
+  box-shadow: 0 4px 16px rgba(153, 129, 250, 0.1);
+}
+
+.da-onb-card--green {
+  background:
+    radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 1) 0%, rgba(228, 255, 241, 0) 100%),
+    linear-gradient(180deg, rgba(214, 252, 238, 0.8) 0%, rgba(236, 255, 249, 0.8) 50%);
+  box-shadow: 0 4px 16px rgba(117, 250, 210, 0.1);
+}
+
+.da-onb-card__glow {
+  position: absolute;
+  top: var(--sp-4);
+  left: var(--sp-4);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  filter: blur(8px);
+}
+
+.da-onb-card--blue .da-onb-card__glow {
+  background: #b7e3ff;
+}
+.da-onb-card--purple .da-onb-card__glow {
+  background: #dbcafd;
+}
+.da-onb-card--green .da-onb-card__glow {
+  background: #b5f9d6;
+}
+
+.da-onb-card__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.da-onb-card__title {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.da-onb-card--blue .da-onb-card__title {
+  background: linear-gradient(180deg, #2678f6 0%, #6cbdf0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+.da-onb-card--purple .da-onb-card__title {
+  background: linear-gradient(180deg, #827bd0 0%, #a7a3e4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+.da-onb-card--green .da-onb-card__title {
+  background: linear-gradient(180deg, #38cb77 0%, #64d697 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+.da-onb-card__desc {
+  margin-top: 6px;
+  font-size: var(--fs-body);
+  line-height: 22px;
+}
+
+.da-onb-card--blue .da-onb-card__desc {
+  color: #adb7c7;
+}
+.da-onb-card--purple .da-onb-card__desc {
+  color: #bbb6c8;
+}
+.da-onb-card--green .da-onb-card__desc {
+  color: #b9c5bf;
+}
+
+.da-onb-card__icon {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.da-onboarding--figma .da-onboarding__card {
+  position: relative;
+  z-index: 1;
+}
+/* ---- Figma 结构对齐（弹性布局，间距按坐标差换算） ---- */
+.da-onboarding--figma {
+  position: relative;
+  overflow: hidden;
+}
+
+.da-onb-flow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 80px;
+}
+
+.da-onb-hero {
+  width: 200px;
+  height: auto;
+}
+
+.da-onb-tagline {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.da-onb-desc {
+  margin-top: 40px;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(180deg, #2678f6 0%, #75c7fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 4px rgba(255, 255, 255, 0.9));
+}
+
+.da-onb-desc--second {
+  margin-top: 8px;
+}
+
+.da-onb-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.da-onb-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.da-onb-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+}
+
+.da-onb-info-row__icon {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.da-onb-info-row__text {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-onboarding--figma .da-onboarding__cta {
+  margin-top: 28px;
+  width: 144px;
+  padding: 12px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.da-onboarding--figma .da-onboarding__check {
+  margin-top: 28px;
+}
+/* ---- 方案一：整帧 + 热区 ---- */
+.da-onboarding--figma {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.da-onb-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1440px;
+  height: 840px;
+  overflow: hidden;
+}
+
+.da-onb-stage__img {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 1440px;
+  height: 880px;
+}
+
+.da-onb-hotspot {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.da-onb-hotspot--cta:disabled {
+  cursor: default;
+}
+
+.da-onb-checkmark {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.da-onb-cta-veil {
+  position: absolute;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+/* ============================================================
+   引导页固定浅色视觉（用户明确：引导页不分浅色/深色）
+   —— 页面/弹窗底色恒为 #FFFFFF（位图浅色背景 + 白卡），
+      深色主题下把内部文字/描边钉回浅色设计值，避免 token
+      翻转成「浅底白字」「白卡深边」。
+   ============================================================ */
+
+/* 页面版（OnboardingPage）：信息组文案 #181818 */
+[data-theme='dark'] .da-onboarding--figma .da-onb-info-row__text {
+  color: #181818;
+}
+
+/* 页面版：特性卡白描边（Figma 卡片 border-white，固定浅色不被深色 token 翻转） */
+[data-theme='dark'] .da-onb-card {
+  border-color: #ffffff;
+}
+
+/* 页面版：CTA 白色描边（浅色 bg-surface）+ 隐私勾选 #808080 + 复选框浅描边 */
+[data-theme='dark'] .da-onboarding--figma .da-onboarding__cta {
+  border-color: #ffffff;
+}
+
+[data-theme='dark'] .da-onboarding--figma .da-onboarding__check {
+  color: #808080;
+}
+
+[data-theme='dark'] .da-onboarding--figma .da-checkbox {
+  border-color: #d4d4d4;
+}
+
+[data-theme='dark'] .da-onboarding--figma .da-onboarding__statement {
+  color: var(--color-primary);
+}

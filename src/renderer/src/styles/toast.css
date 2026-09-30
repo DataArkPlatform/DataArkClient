@@ -1,0 +1,212 @@
+/* ============================================================
+   Toast —— 右下角滑入通知（浅色 Figma 1617:5883/5902/5922/5942；深色 1617:9297/9316/9336/9356/9376）
+   浅色：左半彩色渐隐为卡片白 + 白描边 + 渐变图标盒；
+   深色：横向渐隐（深色调 → #1e1e1e @50%）+ 统一 #4d4d4d 描边 + 实投影，图标盒深色调渐变 + 中调描边。
+   ============================================================ */
+
+.da-toast-host {
+  position: fixed;
+  bottom: var(--sp-6);
+  right: var(--sp-6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--sp-2);
+  pointer-events: none;
+}
+
+/* 卡片（Figma：gradient-to-r tint→white @50%、1px 白描边、16px 圆角、shadow-md） */
+.da-toast {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 438px; /* Figma 内容 408px + 15px×2 内边距 */
+  max-width: calc(100vw - var(--sp-8));
+  padding: 15px;
+  border: 1px solid var(--color-bg-window);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  pointer-events: auto;
+  animation: da-toast-in 250ms ease-out;
+  background: linear-gradient(90deg, var(--toast-tint) 0%, var(--toast-fade-to) 50%);
+}
+
+[data-theme='dark'] .da-toast {
+  /* 深色主题（Figma 1617:9297/9316/9336/9356/9376）：横向渐隐（深色调 → #1e1e1e @50%）
+     与浅色同理，但无白描边——统一 #4d4d4d 描边 + 实投影（shadow 在深色 token 为 none，需显式给出） */
+  background: linear-gradient(90deg, var(--toast-dark-tint) 0%, #1e1e1e 50%);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 变体（Figma 四色 + 无 UI 参考的 neutral 灰）：
+   卡片渐隐色 + 图标盒竖渐变（top→bottom）与 1px 描边 */
+.da-toast--success {
+  --toast-tint: #a1e5af;
+  --toast-icon-a: #28e04e;
+  --toast-icon-b: #04b628;
+  --toast-icon-border: #d1ffda;
+}
+
+.da-toast--error {
+  --toast-tint: #fab0b2;
+  --toast-icon-a: #f49f9f;
+  --toast-icon-b: #f14e4e;
+  --toast-icon-border: #ffd6d6;
+}
+
+.da-toast--warning {
+  --toast-tint: #fad4b0;
+  --toast-icon-a: #f4c59f;
+  --toast-icon-b: #ff8719;
+  --toast-icon-border: #ffe9d6;
+}
+
+.da-toast--info {
+  --toast-tint: #b0ddfa;
+  --toast-icon-a: #9fd3f4;
+  --toast-icon-b: #2678f6;
+  --toast-icon-border: #d6ecff;
+}
+
+.da-toast--neutral {
+  --toast-tint: #e3e3e3;
+  --toast-icon-a: #c9c9c9;
+  --toast-icon-b: #8c8c8c;
+  --toast-icon-border: #efefef;
+}
+
+/* 深色主题变体（Figma 深帧）：卡片渐隐起点 + 图标盒深色调竖渐变与 1px 中调描边 */
+[data-theme='dark'] .da-toast--success {
+  --toast-dark-tint: #0c3014;
+  --toast-icon-a: #259f3e;
+  --toast-icon-b: #006214;
+  --toast-icon-border: #67bd79;
+}
+
+[data-theme='dark'] .da-toast--error {
+  --toast-dark-tint: #300c0c;
+  --toast-icon-a: #df6666;
+  --toast-icon-b: #bd4040;
+  --toast-icon-border: #df8a8a;
+}
+
+[data-theme='dark'] .da-toast--warning {
+  --toast-dark-tint: #301a0c;
+  --toast-icon-a: #df9666;
+  --toast-icon-b: #bd7a40;
+  --toast-icon-border: #dfa98a;
+}
+
+[data-theme='dark'] .da-toast--info {
+  --toast-dark-tint: #032339;
+  --toast-icon-a: #5991d1;
+  --toast-icon-b: #3370cd;
+  --toast-icon-border: #70bcff;
+}
+
+[data-theme='dark'] .da-toast--neutral {
+  --toast-dark-tint: #3a3a3a;
+  --toast-icon-a: #bbb;
+  --toast-icon-b: #5e5e5e;
+  --toast-icon-border: #e3e3e3;
+}
+
+/* 深色：error/warning 用更深投影（Figma shadow-lg 0 8px 16px 0.15） */
+[data-theme='dark'] .da-toast--error,
+[data-theme='dark'] .da-toast--warning {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 图标盒（Figma：40px = 8px 内边距 + 24px 图标，竖渐变 + 1px 彩色描边，白色圆标图标） */
+.da-toast__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--toast-icon-border);
+  background: linear-gradient(180deg, var(--toast-icon-a) 0%, var(--toast-icon-b) 100%);
+  color: #ffffff;
+}
+
+[data-theme='dark'] .da-toast__icon {
+  /* 深色主题：图标色用深色 icon-primary（#E6E6E6），描边沿用各变体 --toast-icon-border（Figma 深帧中调描边） */
+  color: var(--color-icon-primary);
+}
+
+.da-toast__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.da-toast__message {
+  font-size: var(--fs-card-title); /* Figma 16px / lineHeight 24px */
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  word-break: break-word;
+}
+
+.da-toast__sub {
+  font-size: var(--fs-caption); /* Figma 12px / lineHeight 20px */
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-toast__action {
+  flex-shrink: 0;
+  align-self: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-primary);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.da-toast__action:hover {
+  text-decoration: underline;
+}
+
+/* 关闭按钮（Figma：24px 方盒，Close-small 灰 #B3B3B3） */
+.da-toast__close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-icon-disabled);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.da-toast__close:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface-hover);
+}
+
+@keyframes da-toast-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

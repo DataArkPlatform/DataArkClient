@@ -1,0 +1,175 @@
+/* ============================================================
+   DataArk Design System — Design Tokens
+   来源：Figma《语料》正稿·第二版
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --color-primary: #2678f6;
+  --color-primary-hover: #4a8ef6;
+  --color-primary-disabled: #c8d5fc;
+  --color-on-primary: #ffffff;
+
+  /* Surfaces */
+  --color-bg-page: #eff1f5;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-hover: #f7f7f7;
+  --color-bg-elevated: #ffffff;
+  /* 窗口底色（Figma 根帧：浅色整窗白；page 仅作嵌套组件表面色） */
+  --color-bg-window: #ffffff;
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text */
+  --color-text-primary: #181818;
+  --color-text-secondary: #4d4d4d;
+  --color-text-tertiary: #808080;
+  --color-text-disabled: #b3b3b3;
+
+  /* Icon */
+  --color-icon-primary: #383838;
+  --color-icon-secondary: #808080;
+  --color-icon-disabled: #b3b3b3;
+
+  /* Border */
+  --color-border-default: #ebebeb;
+  --color-border-strong: #d4d4d4;
+
+  /* Semantic */
+  --color-success: #09b42c;
+  --color-warning: #ff8719;
+  --color-danger: #fa5151;
+  --color-info: #4a8ef6;
+
+  /* Typography */
+  --font-sans:
+    'Alibaba PuHuiTi 2.0', 'Alibaba PuHuiTi', -apple-system, 'Segoe UI', 'Microsoft YaHei UI',
+    'Microsoft YaHei', sans-serif;
+  --font-num: 'D-DIN', 'DIN Alternate', var(--font-sans);
+
+  --fs-page-title: 20px; /* lineHeight 28px */
+  --fs-card-title: 16px; /* lineHeight 24px */
+  --fs-body: 14px; /* lineHeight 22px */
+  --fs-caption: 12px; /* lineHeight 20px */
+  --fs-small: 13px; /* lineHeight 20px —— M5 详情页辅助文案 */
+  --fs-micro: 11px; /* lineHeight 16px —— M5 代码块/徽标 */
+  --fs-stat: 32px; /* DINPro Black, lineHeight 40px */
+
+  /* M5 · 会话详情页专用字体 */
+  --font-mono: 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Spacing (4px base) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows */
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* Layout skeleton */
+  --layout-titlebar-h: 40px;
+  --layout-sidebar-w: 200px;
+  --layout-sidebar-collapsed-w: 56px;
+
+  /* M5 · 会话详情页 —— 用户气泡底色（浅色，近似 #EDF2FE 的原型 primary-light） */
+  --color-bubble-user: #edf2fe;
+  /* M5 · 会话详情页 —— 代码块底色（浅色） */
+  --color-code-bg: #f1f3f7;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --color-primary-hover: #4a8ef6;
+
+  --color-bg-page: #1e1e1e;
+  --color-bg-surface: #2c2c2c;
+  --color-bg-surface-hover: #353535;
+  --color-bg-elevated: #3a3a3a;
+  /* 窗口底色（Figma AI Agent-2（深）根帧 bg-[#181818]） */
+  --color-bg-window: #181818;
+  --color-overlay: rgba(0, 0, 0, 0.7);
+
+  --color-text-primary: #f2f2f2;
+  --color-text-secondary: #cccccc;
+  --color-text-tertiary: #999999;
+  --color-text-disabled: #666666;
+
+  --color-icon-primary: #e6e6e6;
+  --color-icon-secondary: #b3b3b3;
+  --color-icon-disabled: #666666;
+
+  --color-border-default: #3a3a3a;
+  --color-border-strong: #4d4d4d;
+
+  --color-danger: #ff6b6b;
+
+  /* M5 · 会话详情页 —— 用户气泡底色（深色，与 #2C2C2C surface 协调的蓝灰色调） */
+  --color-bubble-user: #1e2a45;
+  /* M5 · 会话详情页 —— 代码块底色（深色） */
+  --color-code-bg: #111720;
+
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Gradients（Figma 指定多层渐变，未 token 化前集中于此）
+   ============================================================ */
+
+:root {
+  /* 引导页 Logo 圆标：fill_fa42639e 等效 */
+  --gradient-brand: linear-gradient(180deg, #2678f6 0%, #75c7fa 100%);
+
+  /* 引导页「开始使用」按钮 —— 多层蓝色渐变胶囊（Figma 引导页 frame） */
+  --gradient-cta:
+    linear-gradient(-27deg, rgba(151, 227, 255, 0) 50%, rgba(151, 210, 255, 1) 100%),
+    linear-gradient(153deg, rgba(94, 172, 255, 0) 0%, rgba(81, 148, 250, 1) 100%),
+    linear-gradient(180deg, rgba(154, 203, 255, 1) 0%, rgba(191, 231, 255, 0) 16%),
+    linear-gradient(180deg, rgba(145, 224, 255, 1) 0%, rgba(200, 234, 255, 1) 20%, rgba(38, 120, 246, 1) 100%);
+
+  /* 引导页弹窗变体：按钮禁用态（浅蓝灰调） */
+  --gradient-cta-disabled:
+    linear-gradient(-27deg, rgba(173, 205, 255, 0) 50%, rgba(173, 205, 255, 1) 100%),
+    linear-gradient(153deg, rgba(155, 217, 255, 0) 0%, rgba(155, 217, 255, 1) 100%),
+    linear-gradient(180deg, rgba(173, 205, 255, 1) 0%, rgba(155, 217, 255, 1) 100%);
+
+  /* 引导页 CTA 投影（两种主题均保留品牌光晕） */
+  --shadow-cta: 0 8px 24px rgba(111, 189, 254, 0.2);
+
+  /* 分段控件选中项微投影 */
+  --shadow-segment: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  /* 引导页 CTA 胶囊半径 */
+  --radius-pill: 32px;
+
+  /* Toast 渐隐尾色（浅色主题：渐变为白色卡片） */
+  --toast-fade-to: #ffffff;
+
+  /* M4 · 会话管理一次性色值（来源标识 / 星标激活） */
+  --color-source-opencode: #2678f6;
+  --color-star-active: #ff8719;
+}
+
+[data-theme='dark'] {
+  /* 深色主题 Toast 为纯色 elevated 卡片 + 左侧色条（见 toast.css），
+     此处仅保留与浅色主题一致的品牌渐变变量。 */
+  --toast-fade-to: #2c2c2c;
+  --shadow-segment: none;
+
+  /* M4 · 会话管理一次性色值（明暗一致） */
+  --color-source-opencode: #2678f6;
+  --color-star-active: #ff8719;
+}

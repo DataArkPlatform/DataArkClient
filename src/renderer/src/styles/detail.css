@@ -1,0 +1,899 @@
+/* ============================================================
+   会话详情页（M5）—— 消息流 / 气泡 / 内容块 / 成果面板
+   BEM 前缀 da-，颜色一律走 tokens.css 变量
+   ============================================================ */
+
+/* ---- 页面骨架 ---- */
+.da-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.da-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+.da-detail__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.da-detail__meta {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.da-detail__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.da-detail__star {
+  color: var(--color-text-tertiary);
+}
+
+.da-detail__star--on {
+  color: var(--color-star-active);
+}
+
+/* 成果面板收起/展开钮（Figma F4：32×32 深色 #1E1E1E 圆角8） */
+.da-detail__panel-toggle {
+  width: 32px;
+  height: 32px;
+  margin-left: 2px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md);
+  background: #1e1e1e;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.da-detail__panel-toggle:hover {
+  background: #2b2b2b;
+  color: #ffffff;
+}
+
+.da-detail__panel-toggle svg {
+  transition: transform 250ms ease;
+}
+
+.da-detail__panel-toggle--collapsed svg {
+  transform: rotate(180deg);
+}
+
+.da-detail__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  position: relative; /* 成果面板浮窗锚点 */
+}
+
+/* 空状态/异常状态居中容器 */
+.da-detail__states {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* ---- 主区：标题 + 消息流 ---- */
+.da-detail__main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Figma F5：标题固定于滚动区外顶部（sticky 等价），Medium 20px/28 */
+.da-detail__title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-bg-window);
+  font-size: var(--fs-page-title);
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  padding-bottom: 16px; /* 标题↔滚动区 16px */
+  word-break: break-word;
+}
+
+/* Figma F6：气泡固定宽 480/640，间距约 80px */
+.da-detail__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+/* ---- 消息气泡（Figma F7/F8：圆角12 无尾角、padding 12/8）---- */
+.da-msg {
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-body);
+  line-height: 1.57;
+  animation: da-msg-in 250ms ease both;
+}
+
+/* Figma 气泡固定宽 480/640；max-width:100% 兜底，窄窗口下不再溢出容器 */
+.da-msg--user {
+  width: 480px;
+  max-width: 100%;
+  background: var(--color-bg-surface-hover);
+  border: 1px solid #ffffff;
+  color: var(--color-text-tertiary);
+  align-self: flex-end;
+}
+
+.da-msg--assistant {
+  width: 640px;
+  max-width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-secondary);
+  align-self: flex-start;
+}
+
+@keyframes da-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.da-msg__role {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  margin-bottom: 4px;
+}
+
+/* 角色行：用户 Regular #B3B3B3；助手 Medium #808080（无大写） */
+.da-msg--user .da-msg__role {
+  font-weight: 400;
+  color: var(--color-text-disabled);
+}
+
+.da-msg--assistant .da-msg__role {
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+.da-msg__blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+/*
+ * 长串断行：路径 / hash / 无空格的命令输出（如 ls -la 结果）必须能在气泡内换行。
+ * - overflow-wrap:anywhere 对「超长不可断 token」也生效（比已废弃的 word-break:break-word 可靠），
+ *   且会降低 flex 子项的最小内容宽度，避免撑破容器；
+ * - 该属性可继承，故只需设在两个内容根节点上。
+ */
+.da-msg__blocks,
+.da-md,
+.da-detail__title {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ---- 轻量 Markdown ---- */
+.da-md > :first-child {
+  margin-top: 0;
+}
+
+.da-md > :last-child {
+  margin-bottom: 0;
+}
+
+.da-md p {
+  margin: 0 0 8px;
+}
+
+.da-md strong {
+  font-weight: 700;
+}
+
+.da-md h1,
+.da-md h2,
+.da-md h3,
+.da-md h4,
+.da-md h5,
+.da-md h6 {
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 10px 0 6px;
+}
+
+.da-md h1 {
+  font-size: 18px;
+}
+
+.da-md h2 {
+  font-size: 16px;
+}
+
+.da-md h3 {
+  font-size: 15px;
+}
+
+.da-md h4,
+.da-md h5,
+.da-md h6 {
+  font-size: var(--fs-body);
+}
+
+.da-md ul,
+.da-md ol {
+  margin: 4px 0 8px;
+  padding-left: 20px;
+}
+
+.da-md li {
+  margin: 2px 0;
+}
+
+.da-md a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.da-md a:hover {
+  text-decoration: underline;
+}
+
+.da-md blockquote {
+  margin: 8px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--color-border-strong);
+  color: var(--color-text-secondary);
+}
+
+.da-md hr {
+  border: none;
+  border-top: 1px solid var(--color-border-default);
+  margin: 10px 0;
+}
+
+/* 行内代码（Figma F9：#EFF1F5 无边框 r4 px4 py1 12px Regular #4D4D4D，非等宽） */
+.da-md :not(pre) > code {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  background: var(--color-bg-page);
+  border: none;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ---- 代码块（Figma F10：#F7F7F7 容器 r8 p8 + 头部行 + 分隔线） ---- */
+.da-codeblock {
+  margin: var(--sp-3) 0;
+  background: var(--color-bg-surface-hover);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.da-codeblock__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* 语言 chip：行内白底 #D4D4D4 描边 r4 px4 py1 12px #4D4D4D */
+.da-codeblock__lang {
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+  font-family: var(--font-sans);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+}
+
+/* 复制钮：#EBEBEB r4 p4 仅 12px 图标，常显 */
+.da-codeblock__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #ebebeb;
+  border: none;
+  color: var(--color-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.da-codeblock__copy img,
+.da-codeblock__copy svg {
+  width: 12px;
+  height: 12px;
+}
+
+.da-codeblock__copy:hover {
+  background: var(--color-border-default);
+}
+
+.da-codeblock__divider {
+  height: 1px;
+  background: var(--color-border-default);
+  margin: 4px 0;
+}
+
+.da-codeblock pre {
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  overflow-x: auto;
+}
+
+.da-codeblock pre code {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+  white-space: pre;
+}
+
+/* ---- reasoning 折叠块 ---- */
+.da-reasoning__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+}
+
+.da-reasoning__head:hover {
+  color: var(--color-text-primary);
+}
+
+.da-reasoning__chev {
+  color: var(--color-text-tertiary);
+}
+
+.da-reasoning__chev svg {
+  transition: transform 150ms ease;
+}
+
+.da-reasoning__chev--open svg {
+  transform: rotate(0deg);
+}
+
+.da-reasoning__chev svg {
+  transform: rotate(-90deg);
+}
+
+.da-reasoning__body {
+  margin-top: var(--sp-2);
+  padding-left: 12px;
+  border-left: 2px solid var(--color-border-strong);
+  font-size: var(--fs-body);
+  line-height: 1.57;
+  color: var(--color-text-tertiary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- 工具卡片（tool_call / tool_result） ---- */
+.da-toolcard {
+  background: var(--color-bg-surface-hover);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2) var(--sp-3);
+  min-width: 0;
+}
+
+.da-toolcard__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+
+.da-toolcard__head:hover {
+  color: var(--color-text-primary);
+}
+
+.da-toolcard__label {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.da-toolcard__chip {
+  background: var(--color-bg-page);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 16px;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.da-toolcard__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.da-toolcard__dot--completed {
+  background: var(--color-success);
+}
+
+.da-toolcard__dot--error {
+  background: var(--color-danger);
+}
+
+.da-toolcard__dot--pending {
+  background: var(--color-warning);
+}
+
+.da-toolcard__chev {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  color: var(--color-text-tertiary);
+}
+
+.da-toolcard__chev svg {
+  transition: transform 150ms ease;
+  transform: rotate(-90deg);
+}
+
+.da-toolcard__head[aria-expanded='true'] .da-toolcard__chev svg {
+  transform: rotate(0deg);
+}
+
+.da-toolcard__body {
+  margin-top: var(--sp-2);
+  max-height: 300px;
+  overflow: auto;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--color-code-bg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.da-toolcard__summary {
+  margin-top: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--color-code-bg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 72px;
+  overflow: hidden;
+}
+
+/* ---- patch 卡片 ---- */
+.da-patchcard {
+  background: var(--color-bg-surface-hover);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2) var(--sp-3);
+}
+
+.da-patchcard__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.da-patchcard__hash {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 16px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-page);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.da-patchcard__count {
+  margin-left: auto;
+  font-size: var(--fs-micro);
+  line-height: 16px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-page);
+  border-radius: 10px;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.da-patchcard__files {
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.da-patchcard__file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  line-height: 18px;
+  color: var(--color-text-secondary);
+  min-width: 0;
+}
+
+.da-patchcard__file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-patchcard__file svg {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ---- file_ref 单行 ---- */
+.da-fileref {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--color-bg-surface-hover);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+
+.da-fileref svg {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.da-fileref__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-fileref__mime {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+  font-size: var(--fs-micro);
+}
+
+/* ---- compaction 分隔 ---- */
+.da-compaction {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-2) 0;
+}
+
+.da-compaction__line {
+  flex: 1;
+  border-top: 1px solid var(--color-border-default);
+}
+
+.da-compaction__chip {
+  flex-shrink: 0;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* ---- 成果文件面板（Figma F11：浮动浮窗 r12 p8 + 投影 + 全周边框） ---- */
+.da-detail__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 240px;
+  max-height: 100%; /* 内容自适应高度，最多占满 body，超出内部滚动 */
+  z-index: 10;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-bg-surface); /* 浅色白描边（Figma 1660:9702 border-white） */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* 深色成果面板：底 #1E1E1E + 描边 #3A3A3A（Figma 1617:9535） */
+[data-theme='dark'] .da-detail__panel {
+  background: var(--color-bg-page);          /* #1E1E1E */
+  border-color: var(--color-border-default); /* #3A3A3A */
+}
+
+.da-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding-bottom: var(--sp-2);
+  margin-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.da-panel__title {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-panel__sep {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-panel__count {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ---- 成果行（Figma F12：px8 py4 r8 无边框；首行 #F7F7F7 其余透明）---- */
+.da-artifact {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  transition: background 150ms ease;
+}
+
+.da-artifact:hover,
+.da-artifact:first-child {
+  background: var(--color-bg-surface-hover);
+}
+
+/* 成果行深色：首行 #353535（surface-hover 已含）、其余 #181818（比面板 #1E1E1E 略深）
+   与浅色「首行高亮、其余透明」对称（Figma 1617:9535） */
+[data-theme='dark'] .da-artifact:not(:first-child) {
+  background: #181818;
+}
+
+[data-theme='dark'] .da-artifact:hover {
+  background: var(--color-bg-surface-hover); /* #353535 */
+}
+
+.da-artifact__icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+
+.da-artifact__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.da-artifact__name {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.da-artifact:first-child .da-artifact__name {
+  color: var(--color-text-primary);
+}
+
+/* 深色文件名全 #F2F2F2（Figma 1617:9535：首行与其余同名色） */
+[data-theme='dark'] .da-artifact__name {
+  color: var(--color-text-primary);
+}
+
+.da-artifact__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* 成果行操作钮：12px 图标 + 4px 内边距（Figma p4 + 12px icon = 20px 钮） */
+.da-artifact__iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease;
+}
+
+.da-artifact__iconbtn:hover {
+  background: var(--color-bg-page);
+}
+
+.da-artifact__iconbtn img,
+.da-artifact__iconbtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* 首行复制钮底：浅 #EBEBEB / 深 #2C2C2C（Figma 1660:9702 首行 Copy 钮 / 1617:9535 深色） */
+.da-artifact:first-child .da-artifact__iconbtn:first-child {
+  background: #ebebeb;
+}
+
+.da-artifact:first-child .da-artifact__iconbtn:first-child:hover {
+  background: #dedede;
+}
+
+[data-theme='dark'] .da-artifact:first-child .da-artifact__iconbtn:first-child {
+  background: #2c2c2c;
+}
+
+[data-theme='dark'] .da-artifact:first-child .da-artifact__iconbtn:first-child:hover {
+  background: #3a3a3a;
+}
+
+/* ---- 加载骨架 ---- */
+.da-detail__skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.da-skel {
+  height: 64px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface-hover);
+  animation: da-skel-pulse 1.4s ease-in-out infinite;
+}
+
+.da-skel--w38 {
+  width: 38%;
+  align-self: flex-end;
+}
+
+.da-skel--w72 {
+  width: 72%;
+}
+
+.da-skel--w55 {
+  width: 55%;
+}
+
+.da-skel--w30 {
+  width: 30%;
+  align-self: flex-end;
+}
+
+.da-skel--w64 {
+  width: 64%;
+}
+
+@keyframes da-skel-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ---- Figma 图标按钮（返回/复制/收藏：28×28 悬停底 r8） ---- */
+.da-detail__iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface-hover);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.da-detail__iconbtn img {
+  width: 16px;
+  height: 16px;
+}
+
+.da-detail__iconbtn:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+
+.da-detail__iconbtn--on {
+  background: var(--color-bg-page);
+}
+
+.da-detail__iconbtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

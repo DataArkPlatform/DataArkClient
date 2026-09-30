@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <!-- Qoder 占位标识（品牌近似）：圆环 + 右下短尾，单色便于深色主题反白 -->
+  <circle cx="11.5" cy="11.5" r="7.5" stroke="#000000" stroke-width="2.2" />
+  <path d="M16.4 16.4L21 21" stroke="#000000" stroke-width="2.2" stroke-linecap="round" />
+</svg>

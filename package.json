@@ -1,0 +1,53 @@
+{
+  "name": "dataark-client",
+  "productName": "语料方舟",
+  "version": "1.0.0",
+  "description": "语料方舟 DataArt — AI 会话 · 本地管理",
+  "main": "out/main/index.js",
+  "author": "DataArk",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "postinstall": "patch-package && node node_modules/electron/install.js",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
+    "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "dist:win": "electron-vite build && electron-builder --win --config electron-builder.yml",
+    "dist:mac": "electron-vite build && electron-builder --mac --config electron-builder.yml"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.15"
+  },
+  "overrides": {
+    "better-sqlite3": {
+      "gypfile": false
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.3.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "eslint": "^10.9.1",
+    "patch-package": "^8.0.1",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.68.0",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11"
+  }
+}

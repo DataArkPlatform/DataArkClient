@@ -1,0 +1,24 @@
+# 默认按文本自动识别，仓库内统一使用 LF
+* text=auto
+
+# 脚本按平台换行
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制文件不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+
+# 锁文件按生成物处理，折叠 diff
+package-lock.json text eol=lf linguist-generated=true

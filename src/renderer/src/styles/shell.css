@@ -1,0 +1,833 @@
+﻿/* ============================================================
+   App Shell —— 标题栏 / 侧边栏 / 主区域 / 占位卡
+   BEM 前缀 da-，颜色一律走 tokens.css 变量
+   ============================================================ */
+
+/* ---- 应用根 ---- */
+.da-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---- 标题栏 ---- */
+.da-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--layout-titlebar-h);
+  padding: 0 var(--sp-4);
+  background: var(--color-bg-window);
+  border-bottom: 1px solid var(--color-border-default);
+  user-select: none;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.da-titlebar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.da-titlebar__logo {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Figma：DataArk(14 Medium) - 语料方舟(12 Regular) 水平单行，行高22，间距2 */
+.da-titlebar__titles {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  line-height: 22px;
+  min-width: 0;
+}
+
+.da-titlebar__brand {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.da-titlebar__sep {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.da-titlebar__title {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.da-titlebar__right {
+  display: flex;
+  gap: var(--sp-1);
+  -webkit-app-region: no-drag;
+}
+
+.da-titlebar__btn {
+  width: 32px;
+  height: 28px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-icon-secondary);
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.da-titlebar__btn:hover {
+  background: var(--color-bg-surface-hover);
+}
+
+.da-titlebar__btn--close:hover {
+  background: var(--color-danger);
+  color: var(--color-on-primary);
+}
+
+/* ---- 外壳：侧边栏 + 主区 ---- */
+.da-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- 侧边栏 ---- */
+.da-sidebar {
+  width: var(--layout-sidebar-w);
+  background: var(--color-bg-surface-hover);
+  /* Figma：右侧无竖向分隔线（A2） */
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-2);
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.da-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+}
+
+.da-sidebar__brand-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.da-sidebar__brand-en {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.da-sidebar__brand-zh {
+  margin-left: 2px;
+  font-size: var(--fs-caption);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.da-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.da-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.da-nav-item:hover {
+  background: var(--color-bg-page);
+}
+
+.da-nav-item--active {
+  background: var(--color-border-default);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.da-nav-item__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.da-nav-item__icon img {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* 深色主题：单色导航图标反白（浅色下 robot #383838 / 其余 #808080，反相后可见于深色侧栏 #353535） */
+[data-theme='dark'] .da-nav-item__icon img {
+  filter: invert(1);
+}
+
+.da-nav-item__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-nav-item__badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-surface-hover);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px 8px 8px 2px;
+  padding: 0 4px;
+}
+
+.da-sidebar__divider {
+  width: 168px;
+  height: 1px;
+  background: var(--color-border-default);
+  margin: var(--sp-2) auto;
+}
+
+/* ---- 我的项目 ---- */
+.da-projects {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.da-projects-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.da-projects-header__toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-md);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--color-text-tertiary);
+  font-size: var(--fs-caption);
+  transition: background 150ms ease;
+}
+
+.da-projects-header__toggle:hover {
+  background: var(--color-bg-page);
+}
+
+.da-projects-header__label {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-projects-header__icon,
+.da-project-group__folder {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.da-projects-header__arrow {
+  flex-shrink: 0;
+  transition: transform 150ms ease;
+}
+
+.da-projects-header__arrow--open {
+  transform: rotate(90deg);
+}
+
+/* 新建分组圆钮（悬停显隐） */
+.da-projects-header__add {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 2px;
+  margin-right: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.da-projects:hover .da-projects-header__add,
+.da-projects-header__add:focus-visible {
+  opacity: 1;
+}
+
+.da-projects-header__add:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.da-projects-empty {
+  padding: 2px var(--sp-2);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-disabled);
+}
+
+.da-projects-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.da-project-group__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 4px var(--sp-2);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.da-project-group__header:hover {
+  background: var(--color-bg-page);
+}
+
+.da-project-group__header--active {
+  background: var(--color-border-default);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.da-project-group__header--drop {
+  background: var(--color-bg-surface);
+  outline: 2px dashed var(--color-primary);
+  outline-offset: -1px;
+  border-radius: var(--radius-md);
+}
+
+.da-project-group__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-project-group__count {
+  flex-shrink: 0;
+}
+
+.da-project-group__more {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.da-project-group__header:hover .da-project-group__more {
+  opacity: 1;
+}
+
+.da-project-group__more:hover {
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+.da-project-group__rename {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--fs-caption);
+  font-family: inherit;
+  padding: 1px 4px;
+  outline: none;
+}
+
+.da-conv-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 3px var(--sp-2) 3px 26px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  transition: background 150ms ease;
+}
+
+.da-conv-row:hover {
+  background: var(--color-bg-page);
+}
+
+.da-conv-row__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.da-conv-row__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-conv-row__more {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.da-conv-row:hover .da-conv-row__more {
+  opacity: 1;
+}
+
+.da-conv-row__more:hover {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+/* ---- 侧边栏底部 ---- */
+.da-sidebar__spacer {
+  flex: 1;
+  min-height: var(--sp-2);
+}
+
+.da-sidebar__bottom {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-top: var(--sp-2);
+}
+
+/* 底部区上分隔线（Figma：居中 168px，左右留白） */
+.da-sidebar__bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 168px;
+  height: 1px;
+  background: var(--color-border-default);
+}
+
+/* Figma：行内排列（调色盘图标 + 标签 + 右侧控件，justify-between） */
+.da-appearance {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-1);
+  padding: var(--sp-1) 0 var(--sp-1) var(--sp-2);
+}
+
+.da-appearance__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.da-appearance__label img {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.da-appearance__segmented {
+  display: flex;
+  gap: 4px;
+  background: var(--color-bg-page);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.da-segment {
+  flex: 1;
+  height: 20px;
+  padding: 0 var(--sp-2);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.da-segment:hover {
+  color: var(--color-text-secondary);
+}
+
+.da-segment--active {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-segment);
+}
+
+.da-sidebar__version {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  padding: var(--sp-1) var(--sp-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- 底部个人资料行（Figma A7：28px 头像 + 语料方舟 + v1.0.0·MIT + 帮助） ---- */
+.da-sidebar__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+}
+
+.da-sidebar__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+  background: linear-gradient(180deg, #c0dfff 0%, #ffffff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.da-sidebar__avatar img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Figma：语料方舟 + v1.0.0·MIT 同一行 */
+.da-sidebar__profile-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.da-sidebar__profile-name {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.da-sidebar__profile-version {
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.da-sidebar__profile-help {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.da-sidebar__profile-help img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* ---- 主区域 ---- */
+.da-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sp-4);
+  background: var(--color-bg-window);
+}
+
+.da-main__header {
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-3);
+}
+
+.da-main__title {
+  font-size: var(--fs-page-title);
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-main__divider {
+  height: 1px;
+  background: var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.da-main__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px var(--sp-4) var(--sp-8) 0;
+}
+
+/* ---- 占位卡 ---- */
+.da-placeholder-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  max-width: 480px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  padding: var(--sp-5) var(--sp-4);
+  color: var(--color-text-secondary);
+}
+
+.da-placeholder-card__tag {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--sp-2);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.da-placeholder-card__text {
+  font-size: var(--fs-body);
+}
+
+/* ---- 折叠模式（56px 图标态） ---- */
+.da-sidebar {
+  transition: width 200ms ease;
+}
+
+.da-sidebar--collapsed {
+  width: var(--layout-sidebar-collapsed-w, 56px);
+}
+
+.da-sidebar--collapsed .da-nav-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.da-sidebar--collapsed .da-nav-item__label,
+.da-sidebar--collapsed .da-nav-item__badge,
+.da-sidebar--collapsed .da-projects,
+.da-sidebar--collapsed .da-appearance,
+.da-sidebar--collapsed .da-sidebar__version,
+.da-sidebar--collapsed .da-sidebar__divider,
+.da-sidebar--collapsed .da-sidebar__profile-info,
+.da-sidebar--collapsed .da-sidebar__profile-help {
+  display: none;
+}
+
+.da-sidebar--collapsed .da-sidebar__profile {
+  justify-content: center;
+  padding: var(--sp-1) 0;
+}
+
+.da-sidebar__collapse svg {
+  transition: transform 200ms ease;
+}
+/* ---- 分组成员树（L3） ---- */
+.da-project-group__exp {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  padding: 2px;
+  margin-right: -2px;
+}
+
+.da-project-group__exp svg {
+  transition: transform 150ms ease;
+}
+
+.da-tree-members {
+  display: flex;
+  flex-direction: column;
+}
+
+.da-tree-member {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+}
+
+.da-tree-member:hover {
+  background: var(--color-bg-page);
+}
+
+.da-tree-member__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.da-tree-member__title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.da-tree-member__more {
+  visibility: hidden;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  padding: 2px;
+}
+
+.da-tree-member:hover .da-tree-member__more {
+  visibility: visible;
+}
+
+.da-tree-member__empty {
+  padding: 4px 8px 6px 26px;
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================================
+   深色主题覆盖 —— 外壳（Figma 1660:11086 等深帧）
+   ============================================================ */
+
+/* 侧边栏：深帧 #2C2C2C（比浅色的 surface-hover 更贴页面底色） */
+[data-theme='dark'] .da-sidebar {
+  background: var(--color-bg-surface);
+}
+
+/* 主区滚动条：深帧 8px 轨道 #1E1E1E + 浅 #E6E6E6 滑块 */
+[data-theme='dark'] .da-main__content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme='dark'] .da-main__content::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+[data-theme='dark'] .da-main__content::-webkit-scrollbar-thumb {
+  background: #e6e6e6;
+  border-radius: 4px;
+}

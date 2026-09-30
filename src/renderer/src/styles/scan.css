@@ -1,0 +1,1143 @@
+/* ============================================================
+   AI Agent 读取页 —— 三态向导（待读取 / 读取中 / 读取完成）
+   Figma：AI Agent-1（待读取）/ AI Agent-2（读取中）/ AI Agent-3（完成态）
+   BEM 前缀 da-scan-，颜色一律走 tokens.css 变量
+   ============================================================ */
+
+.da-scan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+/* ---- 待读取态（AI Agent-1） ---- */
+.da-scan-idle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  /* 完成过渡：随进度卡一起淡出（与 da-scan-progress 同步 250ms） */
+  transition: opacity 250ms ease, transform 250ms ease, visibility 250ms ease;
+}
+
+.da-scan-idle.da-scan-idle--hiding {
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.da-scan-detect-desc {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-detect-found {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.da-scan-detect-found strong {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.da-scan-nosources {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.da-scan-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  background: var(--color-bg-surface-hover);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-scan-pill--unavailable {
+  opacity: 0.55;
+}
+
+.da-scan-pill__dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* 平台图标（Figma 1914:226：20px logo 替代圆点） */
+.da-scan-pill__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* 纯黑单色图标（opencode/cursor）在深色主题反白，否则深色胶囊上不可见 */
+[data-theme='dark'] .da-scan-pill__icon[data-mono='true'] {
+  filter: invert(1);
+}
+
+.da-scan-pill__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 14px; /* 设计稿数字 14 / 单位「条」12 */
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-pill__unit {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.da-scan-pill__soon {
+  color: var(--color-text-disabled);
+}
+
+.da-scan-modelnote {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+/* 渐变主按钮（复用 --gradient-cta；读取页规格为圆角 8 + 白字） */
+.da-scan-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--gradient-cta);
+  color: var(--color-on-primary);
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+
+.da-scan-cta:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+.da-scan-cta:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.da-scan-cta:disabled {
+  background: var(--gradient-cta-disabled);
+  cursor: not-allowed;
+  color: color-mix(in srgb, var(--color-on-primary) 85%, transparent);
+}
+
+/* ---- 读取中态（AI Agent-2 · 进度卡，对齐 Figma 1660:239） ---- */
+
+/* 进度卡：F7F7F7 卡底（surface-hover）+ 白描边（surface），圆角12，含全部子区块 */
+.da-scan-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--color-bg-surface-hover);
+  border: 1px solid var(--color-bg-window);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  /* 淡入淡出动画 */
+  transition: opacity 250ms ease, transform 250ms ease, visibility 250ms ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.da-scan-progress.da-scan-progress--hiding {
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.da-scan-progress.da-scan-progress--entering {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.da-scan-progress__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.da-scan-progress__title {
+  font-size: var(--fs-body);
+  line-height: 24px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-scan-progress__counter {
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+/* 进度条：24px 高，浅蓝 track（rgba(161,218,255,0.2)）+ 渐变填充（#2678f6→#75c7fa） */
+.da-scan-progress__track {
+  position: relative;
+  height: 24px;
+  background: rgba(161, 218, 255, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.da-scan-progress__fill {
+  position: relative;
+  height: 100%;
+  background: linear-gradient(90deg, #2678f6 0%, #75c7fa 100%);
+  border-radius: var(--radius-md) 12px 12px var(--radius-md);
+  box-shadow: inset -1px 0 2px rgba(255, 255, 255, 0.8);
+  transition: width 300ms ease;
+}
+
+/* 中段扫描细线：fill 内垂直光栅装饰（Figma 1660:299+，纯装饰） */
+.da-scan-progress__scanlines {
+  position: absolute;
+  inset: 4px 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(117, 199, 250, 0.1) 0 2px,
+    transparent 2px 6px
+  );
+  pointer-events: none;
+}
+
+/* 滑块：24px 白色圆钮 + 内嵌 logo（Figma 1660:293-298） */
+.da-scan-progress__knob {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.da-scan-progress__knob::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.da-scan-progress__knob img {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+/* 统计行：两组（已读取 N 条会话 · 耗时 Ts），数字 DINPro 16px Bold */
+.da-scan-progress__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+}
+
+.da-scan-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.da-scan-stat__label {
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+.da-scan-stat__num {
+  font-family: var(--font-num);
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.da-scan-stat__unit {
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+/* 分隔线 */
+.da-scan-progress__divider {
+  height: 1px;
+  background: var(--color-border-default);
+}
+
+/* 内嵌日志面板：rgba(222,222,222,0.2) 圆角8（Figma 1660:240） */
+.da-scan-progress__logs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-2);
+  background: rgba(222, 222, 222, 0.2);
+  border-radius: var(--radius-md);
+}
+
+/* 日志行：32px 高，16px 圆角色块（平台色）+ 状态文本 */
+.da-scan-log {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 32px;
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-primary);
+}
+
+.da-scan-log__dot,
+.da-scan-log__icon {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.da-scan-log__icon {
+  object-fit: contain;
+}
+
+/* 纯黑单色图标（opencode/cursor）在深色主题反白 */
+[data-theme='dark'] .da-scan-log__icon[data-mono='true'] {
+  filter: invert(1);
+}
+
+.da-scan-log[data-status='pending'] .da-scan-log__dot,
+.da-scan-log[data-status='pending'] .da-scan-log__icon {
+  opacity: 0.45;
+}
+
+.da-scan-log[data-status='active'] .da-scan-log__dot,
+.da-scan-log[data-status='active'] .da-scan-log__icon {
+  animation: da-scan-pulse 1s ease-in-out infinite;
+}
+
+.da-scan-log__text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 首帧骨架行（首次进度事件前，最短 800ms） */
+.da-scan-skel {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 32px;
+  padding: 0 var(--sp-2);
+}
+
+.da-scan-skel__bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-page) 25%,
+    var(--color-bg-surface-hover) 37%,
+    var(--color-bg-page) 63%
+  );
+  background-size: 400% 100%;
+  animation: da-scan-shimmer 1.2s ease infinite;
+}
+
+@keyframes da-scan-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes da-scan-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* ---- 完成态（AI Agent-3） ---- */
+/* 完成态容器：入场动画（淡入 + 上移 8px，与读取中 UI 淡出形成交叉过渡） */
+.da-scan-done {
+  animation: da-scan-done-in 250ms ease-out;
+}
+
+@keyframes da-scan-done-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.da-scan-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 56px;
+  padding: 0 16px;
+  background: var(--color-bg-surface-hover);
+  border-radius: var(--radius-lg);
+  flex-wrap: nowrap;
+}
+
+/* 统计条深色：背景与页面同色 #1E1E1E（深帧 Rectangle 8），数值/单位纯白 */
+[data-theme='dark'] .da-scan-stats {
+  background: #1e1e1e;
+}
+
+.da-scan-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.da-scan-stat__label {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.da-scan-stat__value {
+  font-family: var(--font-num);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.da-scan-stat__unit {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.da-scan-stat__tag {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-success);
+}
+
+.da-scan-stat__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-default);
+}
+
+/* 统计条深色：数值/单位纯白 #FFFFFF（深帧 1617:8078 数值 DINPro Bold 20px、单位 Medium 16px） */
+[data-theme='dark'] .da-scan-stats .da-scan-stat__value,
+[data-theme='dark'] .da-scan-stats .da-scan-stat__unit {
+  color: #ffffff;
+}
+
+/* 统计条右侧「查看全部会话」深色按钮 */
+.da-scan-stats__cta {
+  margin-left: auto;
+  position: relative;
+  padding-left: 24px; /* 按钮左侧 24px 竖分割线（浅帧 1660:7093 / 深帧 1660:16373） */
+}
+
+.da-scan-stats__cta::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-default); /* 浅 #EBEBEB / 深 #3A3A3A */
+}
+
+.da-btn.da-btn--dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: #1e1e1e;
+  color: #ffffff;
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 覆盖 .da-btn:hover 的深色文字规则，保持白字 + 悬停时背景变亮 */
+.da-btn.da-btn--dark:hover:not(:disabled) {
+  color: #ffffff;
+  border-color: transparent;
+  background: #333333;
+}
+
+/* 「查看全部会话」深色主题：底 #2C2C2C + #4D4D4D 描边 + 12px 全边距（Figma 1617:8118）
+   浅色基类（#1E1E1E 无边框 px12/py8，Figma 1660:6844）保持不变 */
+[data-theme='dark'] .da-scan-stats__cta .da-btn--dark {
+  background: #2c2c2c;
+  border: 1px solid #4d4d4d;
+  padding: 8px 12px; /* 与浅色等大 py-8（用户 2026-08-28 指定，有意偏离 Figma 深色 p-12） */
+  color: #f2f2f2;
+}
+
+[data-theme='dark'] .da-scan-stats__cta .da-btn--dark:hover:not(:disabled) {
+  color: #f2f2f2;
+  border-color: #4d4d4d;
+  background: #353535;
+}
+
+/* 按平台筛选（本次仅「全部」，平台明细见会话管理页） */
+.da-scan-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.da-scan-filter__label {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--color-text-secondary);
+}
+
+.da-scan-filter__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  font-size: var(--fs-body);
+  line-height: 22px;
+  color: var(--color-text-tertiary);
+  font-family: inherit;
+}
+
+.da-scan-filter__pill--active {
+  background: var(--color-bg-surface-hover);
+  border-color: transparent;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.da-scan-filter__name {
+  white-space: nowrap;
+}
+
+.da-scan-filter__count {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+}
+
+.da-scan-filter__note {
+  font-size: var(--fs-micro, 11px);
+  line-height: 18px;
+  color: var(--color-text-tertiary);
+}
+
+/* 双列卡片网格（Figma 584×80 → 等比 2 列） */
+.da-scan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.da-scan-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: 80px;
+  padding: var(--sp-3);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.da-scan-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.da-scan-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 700;
+  flex-shrink: 0;
+  /* Figma 平台 logo 容器：浅 #EFF1F5 盒 + 白描边（深色主题下同样是浅盒，logo 天然可见） */
+  background: #eff1f5;
+  border: 1px solid #ffffff;
+}
+
+.da-scan-card__logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.da-scan-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 68px; /* 让位给右侧 NEW 徽标 */
+}
+
+.da-scan-card__title {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.da-scan-card__meta {
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-card__new {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff2e5;
+  color: #ff8719;
+  border-radius: 16px;
+  padding: 0 8px;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+}
+
+.da-scan-nocard {
+  padding: var(--sp-6) 0;
+  text-align: center;
+  font-size: var(--fs-caption);
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-filter__pill {
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.da-scan-filter__pill:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.da-scan-filter__pill--active:hover {
+  color: var(--color-text-primary);
+}
+
+.da-scan-filter__dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* 筛选胶囊平台图标（sourceIcon 映射，20px contain，与侧栏扫描胶囊一致） */
+.da-scan-filter__icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* 纯黑单色图标（opencode/cursor）在深色主题反白 */
+[data-theme='dark'] .da-scan-filter__icon[data-mono='true'] {
+  filter: invert(1);
+}
+/* ---- Figma 1617:4041 对齐：步骤指示器 / 摘要数字 / 暗色CTA ---- */
+.da-scan-steps {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.da-scan-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.da-scan-step__avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-bg-surface-hover); /* 未激活 #F7F7F7 */
+  border: 1px solid var(--color-bg-surface); /* 白描边 */
+  flex-shrink: 0;
+}
+
+.da-scan-step--active .da-scan-step__avatar {
+  background: var(--color-bg-page); /* 激活 #EFF1F5 */
+  border-color: var(--color-bg-surface-hover);
+}
+
+/* 步骤头像深色：读取未完成 底 #1E1E1E（Figma 1660:15647）/ 读取完成 底 #2C2C2C（Figma 1660:16173），描边 #3A3A3A */
+[data-theme='dark'] .da-scan-step__avatar {
+  background: #1e1e1e;
+  border-color: #3a3a3a;
+}
+
+[data-theme='dark'] .da-scan-step--active .da-scan-step__avatar {
+  background: #2c2c2c;
+  border-color: #3a3a3a;
+}
+
+/* 内框插画 56px（激活=蓝 / 未激活=灰），方形全显：
+   Figma Mask group 遮罩是「头像」的 80px 圆（Ellipse 28），56px 方形四角到圆心
+   √(28²+28²)≈39.6 < 40 恰在圆内不被裁切，故内框自身不加圆形裁切（否则四角被切） */
+.da-scan-step__inner {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 56px;
+  height: 56px;
+}
+
+/* 内框插画深色：img content 换源为深色切图（不改 DOM）
+   激活态内框与浅色外观一致（用户 2026-08-28 指定：换回浅色 step1-inner.svg，弃用深色双卡 1660:16177）
+   未激活 = 深钱包卡（Figma 1660:11244） */
+[data-theme='dark'] .da-scan-step--active .da-scan-step__inner {
+  content: url(../assets/icons/step1-inner.svg);
+}
+
+[data-theme='dark'] .da-scan-step__inner {
+  content: url(../assets/icons/step2-inner-dark.svg);
+}
+
+/* 角标：img content 换源（不改 DOM）
+   激活 = 青色对勾圆盘，两主题通用（浅色 1660:6728 = 深色 1660:16182）
+   未激活 = 浅色 #EFF1F5 圆盘 / 深色 #1E1E1E 圆盘（Figma 1660:15656） */
+.da-scan-step__corner {
+  content: url(../assets/icons/step2-corner.svg);
+}
+
+[data-theme='dark'] .da-scan-step__corner {
+  content: url(../assets/icons/step2-corner-dark.svg);
+}
+
+.da-scan-step--active .da-scan-step__corner {
+  content: url(../assets/icons/step-corner-active.svg);
+}
+
+/* 第一步（01 手动读取/读取中）角标 = 齿轮（区别于第二步对勾）：
+   激活/读取中 = 青色渐变齿轮（Figma 1632:9925 = step1-corner.svg）
+   完成后浅色 = #EFF1F5 齿轮（Figma 1660:6999）、深色 = #1E1E1E+#3A3A3A 齿轮（Figma 1660:16159） */
+.da-scan-step:first-child .da-scan-step__corner {
+  content: url(../assets/icons/step1-corner-neutral-light.svg);
+}
+
+.da-scan-step:first-child.da-scan-step--active .da-scan-step__corner {
+  content: url(../assets/icons/step1-corner.svg);
+}
+
+[data-theme='dark'] .da-scan-step:first-child .da-scan-step__corner {
+  content: url(../assets/icons/step1-corner-neutral-dark.svg);
+}
+
+[data-theme='dark'] .da-scan-step:first-child.da-scan-step--active .da-scan-step__corner {
+  content: url(../assets/icons/step1-corner.svg);
+}
+
+/* 右下角标 32px（01=齿轮 / 02=对勾，Figma top43/right-1 与 bottom3/right-1） */
+.da-scan-step__corner {
+  position: absolute;
+  right: -1px;
+  bottom: 5px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.da-scan-step:last-child .da-scan-step__corner {
+  bottom: 3px;
+}
+
+.da-scan-step__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 56px;
+}
+
+.da-scan-step__num {
+  font-family: 'DINPro', 'DIN', var(--font-sans);
+  font-weight: 900;
+  font-size: var(--fs-stat);
+  line-height: 40px;
+  color: var(--color-text-disabled);
+}
+
+.da-scan-step--active .da-scan-step__num {
+  color: var(--color-primary);
+}
+
+.da-scan-step__label {
+  font-size: var(--fs-body);
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--color-text-disabled);
+}
+
+.da-scan-step--active .da-scan-step__label {
+  color: var(--color-text-primary);
+}
+
+.da-scan-steps__arrow {
+  width: 64px;
+  height: 56px;
+  color: var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.da-scan-detect-found strong {
+  font-family: 'DINPro', 'DIN', var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  color: var(--color-text-primary);
+}
+
+.da-scan-cta-wrap {
+  display: inline-block;
+  padding: 8px;
+  background: var(--color-bg-surface-hover);
+  border-radius: 12px;
+}
+
+.da-scan-cta.da-scan-cta--dark {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 4px;
+  color: #ffffff;
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.da-scan-cta.da-scan-cta--dark img {
+  width: 20px;
+  height: 20px;
+}
+
+.da-scan-cta.da-scan-cta--dark:disabled {
+  opacity: 0.45;
+}
+
+/* 取消读取（红色渐变填充，Figma C7 / 1660:1397） */
+.da-scan-cta.da-scan-cta--cancel {
+  background: linear-gradient(180deg, #ff828c 0%, #fa5151 100%);
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 4px;
+  color: #ffffff;
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 500;
+  box-shadow:
+    0 4px 8px rgba(255, 74, 94, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.da-scan-cta.da-scan-cta--cancel img {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---- AI Agent 页还原优化（Figma 1617:4041 布局）---- */
+.da-scan-title {
+  font-size: var(--fs-page-title);
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+/* 页面头部行：标题 + 右上操作按钮（完成=手动读取；取消读取在 CTA 槽位） */
+.da-scan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.da-scan-head .da-scan-title {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* 手动读取（白底描边，Figma D7） */
+.da-btn--manual {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--fs-card-title);
+  line-height: 24px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 手动读取图标：对齐 Figma 的 icon-primary(#383838)，与文字 text-primary 区分 */
+.da-btn--manual svg {
+  color: var(--color-icon-primary);
+}
+
+.da-scan-idle {
+  display: grid;
+  grid-template-columns: minmax(0, 520px) auto;
+  align-content: start;
+  row-gap: var(--sp-2);
+}
+
+.da-scan-steps {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-content: center;
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--color-border-default);
+  margin-bottom: var(--sp-2);
+}
+
+.da-scan-detect-desc,
+.da-scan-detect-found,
+.da-scan-pills,
+.da-scan-modelnote,
+.da-scan-nosources,
+.da-scan-skel {
+  grid-column: 1;
+}
+
+.da-scan-cta-wrap {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  align-self: start;
+}
+
+/* ---- 布局修正：显式两栏（替代 grid 方案，修复左列塌缩） ---- */
+.da-scan-idle {
+  display: block;
+}
+
+.da-scan-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 64px;
+  padding: var(--sp-5) 0;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.da-scan-body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-5);
+  padding-top: var(--sp-5);
+}
+
+.da-scan-body__main {
+  flex: 1;
+  min-width: 0;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.da-scan-body__side {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.da-scan-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.da-scan-steps__arrow {
+  color: var(--color-border-strong);
+}
+
+/* ---- 平台胶囊可勾选（手动扫描范围） ---- */
+.da-scan-pill {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+button.da-scan-pill:hover:not(:disabled) {
+  box-shadow: var(--shadow-segment);
+}
+
+.da-scan-pill--off {
+  opacity: 0.45;
+}
+
+/* ---- 数值对齐 Figma 1617:4041 几何规格 ---- */
+.da-scan-title {
+  padding-bottom: 20px; /* 标题底48 → 分隔线68 */
+}
+
+.da-scan-steps {
+  padding: 40px 0; /* 分隔线68→步骤顶108；步骤底188→分隔线228 */
+}
+
+.da-scan-body {
+  padding-top: 24px; /* 分隔线228 → 内容252 */
+}
+
+.da-scan-body__main {
+  max-width: none; /* 左列整宽；正文文本以 max-width 393 收窄，胶囊筛选条整行通栏（Figma 1660:1234） */
+}
+
+/* 正文文本 393px 左列宽；平台胶囊通栏单行（起于内容左缘、跨至 CTA 前） */
+.da-scan-detect-desc,
+.da-scan-modelnote,
+.da-scan-nosources,
+.da-scan-skel {
+  max-width: 393px;
+}
+
+/* 检测结果行自适应宽度（2026-08-28，用户指定：与设计稿 393 无关）：
+   不锁 393，宽度随可用列（grid 第一列 ≤520px）自适应，避免其他电脑
+   未装 DINPro 数字字体回退变宽后提前折行 */
+.da-scan-detect-found {
+  max-width: none;
+}
+
+.da-scan-step__num {
+  font-weight: 700; /* 02 未激活 = DINPro Bold */
+}
+
+.da-scan-step--active .da-scan-step__num {
+  font-weight: 900; /* 01 激活 = DINPro Black */
+}
+
+.da-scan-pill {
+  padding: 5px 12px; /* Figma p5x12 */
+}
+
+.da-scan-pill__count {
+  font-weight: 400;
+  color: var(--color-text-tertiary);
+}
+
+.da-scan-steps__arrow {
+  object-fit: contain;
+}
+
+/* 步骤箭头深色：img content 换源为深色切图（不改 DOM）
+   深色 = 与浅色同构双箭头 64×56，外 #353535→#1E1E1E 透明、内 #1E1E1E 透明→#666666（Figma 1617:8276 步骤行，箭头节点 1617:8290） */
+[data-theme='dark'] .da-scan-steps__arrow {
+  content: url(../assets/icons/steps-arrow-dark.svg);
+}
+/* ---- 不可用原因样式 ---- */
+.da-scan-pill--unavailable {
+  opacity: 0.6;
+}
+
+.da-scan-pill--unavailable:disabled {
+  cursor: not-allowed;
+}
+
+.da-scan-pill--not-implemented {
+  opacity: 0.4;
+}
+
+.da-scan-pill__unavailable-text {
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  margin-left: var(--sp-1);
+  white-space: nowrap;
+}
+
+.da-scan-pill__soon {
+  display: none;
+}
