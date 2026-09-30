@@ -28,6 +28,8 @@ nsis:
   installerLanguages:
     - zh_CN
   deleteAppDataOnUninstall: false
+  # 产物命名：避免中文/空格被 GitHub 等平台剥除或替换，统一使用 ASCII
+  artifactName: DataArt-Setup-${version}.${ext}
 # macOS —— 未签名分发（内测/开源）：identity: null 关闭签名与公证
 # better-sqlite3@13 采用 prebuildify，包内自带 darwin-arm64/darwin-x64 二进制，
 # 配合 npmRebuild:false 可直接交叉打包，无需在 mac 上重建原生模块。
@@ -36,6 +38,8 @@ mac:
   # 有正式 1024 源图后可直接替换本文件（保持同名即可）。
   icon: build/icon-1024.png
   category: public.app-category.developer-tools
+  # 产物命名：dmg / zip 统一 ASCII（DataArt-<version>-<arch>.<ext>）
+  artifactName: DataArt-${version}-${arch}.${ext}
   identity: null
   hardenedRuntime: false
   gatekeeperAssess: false

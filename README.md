@@ -25,7 +25,7 @@ npm run dev          # 开发模式（热更新）
 npm run typecheck    # 类型检查（node + web 两套 tsconfig）
 npm test             # vitest 单元测试
 npm run lint         # eslint
-npm run dist:win     # 构建 Windows NSIS 安装包 → release/<version>/
+npm run dist:win     # 构建 Windows NSIS 安装包（DataArt-Setup-<version>.exe）→ release/<version>/
 npm run dist:mac     # 构建 macOS 安装包（arm64 + x64，dmg + zip）→ release/<version>/
 ```
 
@@ -46,10 +46,10 @@ npm run dist:mac
 产物（未签名，可直接内测分发）：
 
 ```
-release/1.0.0/语料方舟-1.0.0-arm64.dmg   # Apple Silicon
-release/1.0.0/语料方舟-1.0.0-x64.dmg     # Intel
-release/1.0.0/语料方舟-1.0.0-arm64-mac.zip
-release/1.0.0/语料方舟-1.0.0-x64-mac.zip
+release/1.0.0/DataArt-1.0.0-arm64.dmg   # Apple Silicon
+release/1.0.0/DataArt-1.0.0-x64.dmg     # Intel
+release/1.0.0/DataArt-1.0.0-arm64.zip
+release/1.0.0/DataArt-1.0.0-x64.zip
 ```
 
 > **未签名说明**：首次打开会被 Gatekeeper 拦截，右键「打开」或执行
